@@ -1,42 +1,32 @@
-import React,{useEffect,useState} from 'react';
-import axios from 'axios';
-import Gallery from './Gallery';
+import React,{useState} from 'react'
+import Todolist from './Todolist'
 
-const apiKey = "636e1481b4f3c446d26b8eb6ebfe7127";
 const App = () => {
-  const [data,setData] = useState([]);
-  const [search,setSearch] = useState("");
-  useEffect(()=>{
-    },[])
-  const changeHandler = e =>{
-    setSearch(e.target.value);
+  const [task,setTask] = useState("")
+  const [todos,setTodos] = useState([])
+  const changeHandle = e =>{
+    setTask(e.target.value)
   }
   const submitHandler = e =>{
-    e.preventDefault();
-    axios
-    .get(
-      `https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=${apiKey}&tags=${search}&per_page=24&format=json&nojsoncallback=1`
-    )
-    .then(response => {
-      setData(response.data.photos.photo)
-    })
-    .catch(error => {
-      console.log(
-        "Encountered an error with fetching and parsing data",
-        error
-      );
-  })
+    e.preventDefault()
+    console.log(task)
+    const newTodo = [...todos,task]
+    setTodos(newTodo)
+    setTask("")
+  }
+  const deleteHandler = (indexvalue) => {
+    const newTodo = todos.filter((todo,index)=>index!==indexvalue)
+    setTodos(newTodo)
   }
   return (
     <div>
       <center>
-        <h2>Gallery Snapshot</h2><br></br>
         <form onSubmit={submitHandler}>
-          <input size="30" type="text" onChange={changeHandler} value={search}/><br /><br />
-          <input type="submit" name="Search" />
+          <h1>TODO LIST</h1>
+          <input size="30" type="text" name="task" value={task} onChange={changeHandle} /> &nbsp; &nbsp;
+          <input type="submit" name="Add" value="Add" />
         </form>
-        <br />
-        {data.length>=1?<Gallery data={data}/>:<h4>No Image Loaded</h4>}
+        <Todolist todolist={todos} deleteHandler={deleteHandler}/>
       </center>
     </div>
   )
